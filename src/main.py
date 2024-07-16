@@ -45,7 +45,7 @@ def file_updater(file):
             if new_hash != current_hash:
                 print(f"Data has changed, updating and running the new script. [{file}]")
                 
-                # Save the new data to current.py
+                # Save the new data to file
                 save_to_file(data, file)
                 
                 # Stop the currently running script if it exists

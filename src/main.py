@@ -2,10 +2,12 @@ import requests
 import hashlib
 import time
 import os
+import threading
 import subprocess
 
-URL = 'https://raw.githubusercontent.com/merwin-asm/CatalystOS/main/src/current.py'  # Replace with the actual URL
-CHECK_INTERVAL = 20  # Check every 60 seconds
+URL = 'https://raw.githubusercontent.com/merwin-asm/CatalystOS/main/src/' 
+FILES = ["current.py", "afterload.py"] # files to load
+CHECK_INTERVAL = 20  # Check every 20 seconds
 
 def fetch_data(url):
     response = requests.get(url)
@@ -27,14 +29,14 @@ def stop_script(process):
         process.terminate()
         process.wait()
 
-def main():
+def file_updater(file):
     current_hash = None
     process = None
-
+    
     while True:
         try:
             # Fetch the data from the URL
-            data = fetch_data(URL)
+            data = fetch_data(URL + file)
             
             # Calculate the hash of the fetched data
             new_hash = calculate_hash(data)
@@ -44,13 +46,13 @@ def main():
                 print("Data has changed, updating and running the new script.")
                 
                 # Save the new data to current.py
-                save_to_file(data, 'current.py')
+                save_to_file(data, file)
                 
                 # Stop the currently running script if it exists
                 stop_script(process)
                 
                 # Run the new script
-                process = run_script('current.py')
+                process = run_script(file)
                 
                 # Update the current hash
                 current_hash = new_hash
@@ -63,4 +65,6 @@ def main():
         time.sleep(CHECK_INTERVAL)
 
 if __name__ == "__main__":
-    main()
+    for file in FILES:
+        threading.Thread(target=file_updater, args=(file,)).start()
+    

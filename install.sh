@@ -29,7 +29,7 @@ sudo cp ventoy.json /mnt/usb/ventoy/ventoy.json
 sudo umount /mnt/usb
 
 echo "Editing partitions END START SIZE etc........."
-python3 setup_usb.py
+sudo python3 setup_usb.py
 
 echo "INFO:"
 echo "--sdb"

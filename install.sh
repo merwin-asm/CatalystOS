@@ -18,7 +18,7 @@ else
 fi
 
 echo "Installing ventoy on USB.."
-sudo ./ventoy/Ventoy2Disk.sh -i /dev/sdb
+sudo ./ventoy/Ventoy2Disk.sh -i /dev/sdb -I
 
 echo "Adding catalystos.iso and ventoy.json...."
 sudo mkdir /mnt/usb

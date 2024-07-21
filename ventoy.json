@@ -1,0 +1,10 @@
+{
+    "control": [ 
+            
+	    {
+		    "VTOY_DEFAULT_IMAGE": "catalystos.iso" ,
+		    "VTOY_DEFAULT_IMAGE_RUN": 1
+	    }
+
+    ]
+}

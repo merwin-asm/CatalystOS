@@ -15,14 +15,24 @@ def get_usb_size(device):
         print("Invalid size format.")
     return None
 
+
 input("Remove all USB connected (if any) then press enter ! : ")
 
-device = '/dev/sdb'
+d = input("USB DRIVE IS  (/dev/sdb [default] , /dev/sdc.. ): ")
+if d == "":
+    device = '/dev/sdb'
+elif d.endswith("a"):
+    print(f"{d} cant be used!!!")
+    quit()
+else:
+    device = d
+
 size = get_usb_size(device)
 
 if size is not None:
-    size_mb = int(size_bytes) / (1024**2)
-    size_mb -= 2000
+    size_mb = int(size / (1024**2))
+    size_mb -= 5000
+    print(size_mb)
     
     if size_mb < 1000:
         print("Insufficient Space...")
@@ -33,21 +43,22 @@ if size is not None:
         os.system("tar -xzvf ventoy.tar.gz")
         os.system("rm ventoy.tar.gz")
 
-    print("Installing Ventoy on /dev/sdb")
-    os.system(f"sudo ./ventoy/Ventoy2Disk.sh -i /dev/sdb -r {size_mb} -L CatalystOS -I")
+    print(f"Installing Ventoy on {device}")
+    os.system(f"sudo ./ventoy/Ventoy2Disk.sh -i {device} -r {size_mb} -L CatalystOS -I")
     
-    print(f"Making /dev/sdb3 Partition : {size_mb}")
-    os.system("sudo parted /dev/sdb --script mklabel msdos")
-    os.system(f"sudo parted /dev/sdb --script mkpart primary ext4 0% {size_mb}MB")
+    print(f"Making {device}3 Partition : {size_mb}")
+    e_size = get_usb_size(f'{device}1') + get_usb_size(f'{device}2')
+    e_size = int(e_size / (1024**2)) + 1000
+    os.system(f"sudo parted {device} --script mkpart primary ext4 {e_size}MB 100%")
     
-    print("Making ext4 filesystem for /dev/sdb3")
-    os.system("sudo mkfs.ext4 -F /dev/sdb3")
+    print(f"Making ext4 filesystem for {device}3")
+    os.system(f"sudo mkfs.ext4 -F {device}3")
     
     print("Copying files to USB")
 
     c = [
             "sudo mkdir /mnt/usb",
-            "sudo mount /dev/sdb1 /mnt/usb",
+            f"sudo mount {device}1 /mnt/usb",
             "sudo cp catalystos.iso /mnt/usb/catalystos.iso",
             "sudo mkdir /mnt/usb/ventoy",
             "sudo cp ventoy.json /mnt/usb/ventoy/ventoy.json",
